@@ -53,7 +53,7 @@ export const pureWithTracker = function (...args) {
 			}
 
 			render() {
-				return <WrappedComponent; {...this.props} {...this.state.trackerResult} />
+				return <WrappedComponent {...this.props} {...this.state.trackerResult} />
 			}
 		};
 	}
