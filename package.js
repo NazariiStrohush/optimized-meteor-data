@@ -18,5 +18,5 @@ Package.onUse(function(api) {
 });
 
 Npm.depends({
-	react: "16.0.3",
+	react: "16.0.0",
 });
