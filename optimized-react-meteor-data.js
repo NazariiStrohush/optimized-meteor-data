@@ -22,9 +22,10 @@ export const pureWithTracker = function (...args) {
 
         // Detect args which user passed
         if (typeof args[1] === 'function') {
+          this.trackerFn = args[1];
+
           if (typeof args[0] === 'function') {
             this.shouldRerunTracker = args[0];
-            this.trackerFn = args[1];
           } else if (typeof args[0] === 'boolean') {
             this.shouldRerunTracker = args[0] ? trueFn : falseFn;
           }
