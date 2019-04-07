@@ -1,6 +1,6 @@
 Package.describe({
   name: 'optimized-react-meteor-data',
-  version: '1.0.0',
+  version: '1.0.1',
   summary: 'HOC which using withTracker BUT provide ability to return previous result and prevent useless cascade calculations',
   git: 'https://github.com/NazariiStrohush/optimized-react-meteor-data',
   documentation: 'README.md'
