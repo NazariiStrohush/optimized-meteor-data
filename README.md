@@ -1,4 +1,4 @@
-###Syntax
+## Syntax
 ```js
   pureWithTracker(
     shouldForceRefetchData: boolean | (prevProps: Object, nextProps: Object, prevResult: any) => boolean,
@@ -6,11 +6,11 @@
   ): HigherOrderComponent,
 ```
 
-###Short description
+## Short description
 
 Use this package to provide reactive wrapper (HOC) for your meteor component with ability to return previous result and prevent useless cascade calculations.
 
-###What the problems we have using withTracker?
+## Which problems we have using withTracker?
 
 Saying briefly - `withTracker` force reruns all reactive stuff inside, after receiving new props.
 
@@ -67,12 +67,12 @@ Reactivity works **but** it will rerun **every time** when something changed in 
 For example when some organization will be added/changed/removed from **organizations** array it will rerun our callback and make request to database for projects, posts, and profile which is **totally** useless here and will cause performance issues.
 
 According to this let's split database requests by separate `withTracker`'s with `compose` to avoid useless refething of 
-**Users** collection when **Organizations**, **Posts**, **Projects** changed.
+`Users` collection when `Organizations`, `Posts`, `Projects` changed.
 We will have the next sequence:
  
-**Users** -> **Organizations** -> **Projects** -> **Posts** -> **UserProfile**
+`Users` -> `Organizations` -> `Projects` -> `Posts` -> `UserProfile`
 
-Where every next **withTracker** HOC depends on previous one, and doing **force update**.
+Where every next `withTracker` HOC depends on previous one, and doing **useless force update/refetch data**.
 
 ```js
 import Users from '/api/users';
@@ -158,7 +158,7 @@ const enhancer = compose(
   ),
   // Find posts which related to user projects
   pureWithTracker(
-    // Deside in callback that you need to force update/refetch data or just return actualData
+    // Deside in callback when you need to force update/refetch data or just return actualData
     (prevProps, nextProps, actualData) => {
       const prevProjects = prevProps.projects;
       const nextProjects = nextProps.projects;
