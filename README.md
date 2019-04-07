@@ -64,6 +64,7 @@ export default enhancer(UserProfilePage);
 ```
 
 Reactivity works **but** it will rerun **every time** when something changed in just **one** of collections.
+
 For example when some organization will be added/changed/removed from **organizations** array it will rerun our callback and make request to database for projects, posts, and profile which is **totally** useless here and will cause performance issues.
 
 According to this let's split database requests by separate `withTracker`'s with `compose` to avoid useless refething of 
@@ -81,7 +82,7 @@ import Posts from '/api/users';
 import Organizations from '/api/users';
 
 import { withTracker } from 'meteor/react-meteor-data';
-import { compose, branch, renderNothing } from 'recompose';
+import { compose, renderNothing } from 'recompose';
 // you can also use `lodash/flow`
 
 const enhancer = compose(
@@ -91,11 +92,9 @@ const enhancer = compose(
     const profile = Users.findOne({ userId });
     return { profile };
   }),
-  // Prevent render something when no user found
-  branch(({ profile }) => !profile, renderNothing),
   // Find organizations
   withTracker((props) => {
-    const { _id: userId } = props.profile;
+    const { userId } = props;
     const organizations = Organizations.find({ userId }).fetch();
     return { organizations };
   }),
@@ -107,7 +106,7 @@ const enhancer = compose(
   }),
   // Find posts which related to user projects
   withTracker(props => {
-    const { _id: userId, projects } = props;
+    const { userId, projects } = props;
     const projectIds = projects.map(p => p._id);
     const posts = Posts.find({ userId, projectId: { $in: projectIds } }).fetch();
     return { posts };
@@ -136,14 +135,12 @@ const enhancer = compose(
       return { profile };
     },
   ),
-  // Prevent render something when no user found
-  branch(({ profile }) => !profile, renderNothing),
   // Find organizations
   pureWithTracker(
     false, // pass false to prevent refetch data caused by foreign components
     (props, actualData) => {
     // use "actualData" from previous data request when you need it
-    const { userId } = props.profile;
+    const { userId } = props;
     const organizations = Organizations.find({ userId }).fetch();
     return { organizations };
   }),
