@@ -1,14 +1,15 @@
 /*
 Created at my FREE time for FREE usage
-author Nazarii Strohush https://github.com/nazariistrohush
-https://github.com/NazariiStrohush/optimized-react-meteor-data
-2019
+Author Nazarii Strohush: https://github.com/nazariistrohush
+Package repo: https://github.com/NazariiStrohush/optimized-react-meteor-data
+Created in 2019
 */
 
 import React from 'react';
 import { Tracker } from 'meteor/tracker';
 
 const trueFn = () => true;
+const falseFn = () => false;
 
 export const pureWithTracker = function (...args) {
   return function (WrappedComponent) {
@@ -18,15 +19,19 @@ export const pureWithTracker = function (...args) {
         this.state = {
           trackerResult: {},
         };
-        this.shouldRerunTracker = trueFn;
 
-        if (typeof args[0] === 'function') {
-          if (typeof args[1] === 'function') {
+        // Detect args which user passed
+        if (typeof args[1] === 'function') {
+          this.trackerFn = args[1];
+
+          if (typeof args[0] === 'function') {
             this.shouldRerunTracker = args[0];
-            this.trackerFn = args[1];
-          } else {
-            this.trackerFn = args[0];
+          } else if (typeof args[0] === 'boolean') {
+            this.shouldRerunTracker = args[0] ? trueFn : falseFn;
           }
+        } else {
+          this.shouldRerunTracker = trueFn;
+          this.trackerFn = args[0];
         }
       }
 
