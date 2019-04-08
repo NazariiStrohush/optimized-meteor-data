@@ -1,7 +1,7 @@
 Package.describe({
-  name: 'nazariistrohush:pureWithTracker',
+  name: 'nazariistrohush:pure-meteor-react',
   version: '1.0.1',
-  summary: 'HOC which using withTracker BUT provide ability to return previous result and prevent useless cascade calculations',
+  summary: 'Optimized react meteor data',
   git: 'https://github.com/NazariiStrohush/optimized-react-meteor-data',
   documentation: 'README.md'
 });
