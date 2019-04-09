@@ -21,6 +21,13 @@ pureWithTracker(
     // return object with new props for next/wrapped component
   },
 );
+
+// OR
+
+pureWithTracker((props, prevResult) => {
+  // function with reactive data fetching/calculations
+  // return object with new props for next/wrapped component
+});
 ```
 
 ## Short description
