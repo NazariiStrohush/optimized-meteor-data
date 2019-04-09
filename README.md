@@ -13,7 +13,7 @@ import { pureWithTracker } from 'meteor/nazariistrohush:pure-meteor-react';
 
 pureWithTracker(
   (props, nextProps, prevResult) => {
-    // return true or false here to force rerun next fuction
+    // return true or false here to force rerun callback with reactive calculations (second pureWithTracker param)
   },
   (props, prevResult) => {
     // function with reactive data fetching/calculations
