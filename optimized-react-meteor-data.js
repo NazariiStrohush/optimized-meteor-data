@@ -43,7 +43,7 @@ export const pureWithTracker = function (...args) {
         }
       }
 
-      componentDidMount() {
+      componentWillMount() {
         this.trackerHandler = Tracker.autorun(() => {
           this.setState({
             trackerResult: this.trackerFn(this.props, this.state.trackerResult),
