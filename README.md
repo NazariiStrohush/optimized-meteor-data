@@ -6,6 +6,22 @@
   ): HigherOrderComponent,
 ```
 
+## Example
+
+```js
+import { pureWithTracker } from 'meteor/nazariistrohush:pure-meteor-react';
+
+pureWithTracker(
+  (props, nextProps, prevResult) => {
+    // return true or false here to force rerun next fuction
+  },
+  (props, prevResult) => {
+    // function with reactive data fetching/calculations
+    // return object with new props for next/wrapped component
+  },
+);
+```
+
 ## Short description
 
 Use this package to provide reactive wrapper (HOC) for your meteor component with ability to return previous result and prevent useless cascade calculations.
