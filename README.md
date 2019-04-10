@@ -124,7 +124,7 @@ const enhancer = compose(
   }),
   // Find user projects
   withTracker(props => {
-    const { _id: userId } = props;
+    const { userId } = props;
     const projects = Projects.find({ userId }).fetch();
     return { projects };
   }),
