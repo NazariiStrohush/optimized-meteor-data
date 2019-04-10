@@ -36,11 +36,16 @@ export const pureWithTracker = function (...args) {
       }
 
       componentWillReceiveProps(nextProps) {
-        if (this.shouldRerunTracker(this.props, nextProps, this.state.trackerResult)) {
-          this.setState({
-            trackerResult: this.trackerFn(nextProps, this.state.trackerResult),
-          })
-        }
+        this.trackerHandler.stop();
+        const forceRerun = this.shouldRerunTracker(this.props, nextProps, this.state.trackerResult);
+        // Let's recreate computation instance to use new props anyway this or next time
+        this.trackerHandler = Tracker.autorun(c => {
+          if (!c.firstRun || forceRerun) {
+            this.setState({
+              trackerResult: this.trackerFn(nextProps, this.state.trackerResult),
+            });
+          }
+        });
       }
 
       componentWillMount() {
