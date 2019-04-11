@@ -1,8 +1,8 @@
 ## Syntax
 ```js
   pureWithTracker(
-    shouldForceRefetchData: boolean | (prevProps: Object, nextProps: Object, prevResult: any) => boolean,
-    trackerCallback: (props: Object, prevResult: any) => Object,
+    forceRerunComputation: boolean | (prevProps: Object, nextProps: Object, prevResult: any) => boolean,
+    trackerCallback: (props: Object, forceRun: Boolean, prevResult: Object) => Object,
   ): HigherOrderComponent,
 ```
 
@@ -13,10 +13,10 @@ import { pureWithTracker } from 'meteor/nazariistrohush:pure-meteor-react';
 
 pureWithTracker(
   (props, nextProps, prevResult) => {
-    // return true or false here to force rerun callback with reactive calculations
-    // (second pureWithTracker param)
+    // return true or false here to detect focure rerun callback with reactive calculations
+    // result will be passed to computation callback below
   },
-  (props, prevResult) => {
+  (props, forceRun, prevResult) => {
     // function with reactive data fetching/calculations
     // return object with new props for next/wrapped component
   },
@@ -24,9 +24,9 @@ pureWithTracker(
 
 // OR
 
-pureWithTracker((props, prevResult) => {
-  // function with reactive data fetching/calculations
-  // return object with new props for next/wrapped component
+pureWithTracker((props, forceRun, prevResult) => {
+  // by default "forceRun" will be equal "true"
+  // will work as withTracker HOC
 });
 ```
 
@@ -117,14 +117,14 @@ const enhancer = compose(
     return { profile };
   }),
   // Find organizations
-  withTracker((props) => {
+  withTracker(props => {
     const { userId } = props;
     const organizations = Organizations.find({ userId }).fetch();
     return { organizations };
   }),
   // Find user projects
   withTracker(props => {
-    const { _id: userId } = props;
+    const { userId } = props;
     const projects = Projects.find({ userId }).fetch();
     return { projects };
   }),
@@ -162,15 +162,18 @@ const enhancer = compose(
   // Find organizations
   pureWithTracker(
     false, // pass false to prevent refetch data caused by foreign components
-    (props, actualData) => {
-    // use "actualData" from previous data request when you need it
-    const { userId } = props;
-    const organizations = Organizations.find({ userId }).fetch();
-    return { organizations };
-  }),
+    (props, forceRun, prevResult) => {
+      if (!forceRun) {
+        return prevResult;
+      }
+      // use "prevResult" from previous computation run request when you need it
+      const { userId } = props;
+      const organizations = Organizations.find({ userId }).fetch();
+      return { organizations };
+    }
+  ),
   // Find user projects
   pureWithTracker(
-    true,
     props => {
       const { userId } = props;
       const projects = Projects.find({ userId }).fetch();
@@ -180,7 +183,7 @@ const enhancer = compose(
   // Find posts which related to user projects
   pureWithTracker(
     // Deside in callback when you need to force update/refetch data or just return actualData
-    (prevProps, nextProps, actualData) => {
+    (prevProps, nextProps) => {
       const prevProjects = prevProps.projects;
       const nextProjects = nextProps.projects;
       const projectsChanged = !_.isEquals(prevProjects, nextProjects);
@@ -188,7 +191,10 @@ const enhancer = compose(
       // returen "false" to return actual (previous fetched data) and not make force useless data request to db
       return projectsChanged;
     },
-    props => {
+    (props, forceRun, prevResult) => {
+      if (!forceRun) {
+        return prevResult;
+      }
       const { userId, projects } = props;
       const projectIds = projects.map(p => p._id);
       const posts = Posts.find({ userId, projectId: { $in: projectIds } }).fetch();
