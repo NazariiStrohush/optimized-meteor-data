@@ -1,6 +1,6 @@
 Package.describe({
   name: 'nazariistrohush:pure-meteor-react',
-  version: '1.0.4',
+  version: '1.1.0',
   summary: 'Optimized react meteor data',
   git: 'https://github.com/NazariiStrohush/optimized-react-meteor-data',
   documentation: 'README.md'

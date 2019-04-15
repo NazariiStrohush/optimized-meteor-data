@@ -37,19 +37,21 @@ export const pureWithTracker = function (...args) {
 
       componentWillReceiveProps(nextProps) {
         this.trackerHandler.stop();
-        const forceRerun = this.shouldRerunTracker(this.props, nextProps, this.state.trackerResult);
+        const forceRerun = this.shouldRerunTracker(this.props, this.state.trackerResult);
         // Let's recreate computation instance to use new props anyway this or next time
-        this.trackerHandler = Tracker.autorun(() => {
-          this.setState({
-            trackerResult: this.trackerFn(nextProps, forceRerun, this.state.trackerResult),
-          });
+        this.trackerHandler = Tracker.autorun((c) => {
+          if (!c.firstRun || forceRerun) {
+            this.setState({
+              trackerResult: this.trackerFn(nextProps, this.state.trackerResult),
+            });
+          }
         });
       }
 
       componentWillMount() {
         this.trackerHandler = Tracker.autorun(() => {
           this.setState({
-            trackerResult: this.trackerFn(this.props, true, this.state.trackerResult),
+            trackerResult: this.trackerFn(this.props, this.state.trackerResult),
           });
         });
       }
@@ -66,4 +68,3 @@ export const pureWithTracker = function (...args) {
     };
   }
 };
-

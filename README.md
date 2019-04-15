@@ -16,7 +16,7 @@ pureWithTracker(
     // return true or false here to detect focure rerun callback with reactive calculations
     // result will be passed to computation callback below
   },
-  (props, forceRun, prevResult) => {
+  (props, prevResult) => {
     // function with reactive data fetching/calculations
     // return object with new props for next/wrapped component
   },
@@ -24,8 +24,7 @@ pureWithTracker(
 
 // OR
 
-pureWithTracker((props, forceRun, prevResult) => {
-  // by default "forceRun" will be equal "true"
+pureWithTracker((props, prevResult) => {
   // will work as withTracker HOC
 });
 ```
@@ -162,10 +161,7 @@ const enhancer = compose(
   // Find organizations
   pureWithTracker(
     false, // pass false to prevent refetch data caused by foreign components
-    (props, forceRun, prevResult) => {
-      if (!forceRun) {
-        return prevResult;
-      }
+    (props, prevResult) => {
       // use "prevResult" from previous computation run request when you need it
       const { userId } = props;
       const organizations = Organizations.find({ userId }).fetch();
@@ -191,10 +187,7 @@ const enhancer = compose(
       // returen "false" to return actual (previous fetched data) and not make force useless data request to db
       return projectsChanged;
     },
-    (props, forceRun, prevResult) => {
-      if (!forceRun) {
-        return prevResult;
-      }
+    (props, prevResult) => {
       const { userId, projects } = props;
       const projectIds = projects.map(p => p._id);
       const posts = Posts.find({ userId, projectId: { $in: projectIds } }).fetch();
