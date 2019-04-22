@@ -2,7 +2,7 @@
 ```js
   pureWithTracker(
     forceRerunComputation: boolean | (prevProps: Object, nextProps: Object, prevResult: any) => boolean,
-    trackerCallback: (props: Object, forceRun: Boolean, prevResult: Object) => Object,
+    trackerCallback: (props: Object, prevResult: Object) => Object,
   ): HigherOrderComponent,
 ```
 
